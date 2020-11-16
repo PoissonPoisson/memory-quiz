@@ -11,12 +11,6 @@ export async function req_home (res: ServerResponse): Promise<void> {
   const data: string = await readFileAsync(join(__dirname, '../../data.json'), 'utf-8');
   const serverData: any = JSON.parse(data);
 
-  const dataOnPage: any = {
-    quiz_name: process.env.QUIZ_NAME,
-    gameCounter: serverData.gameCounter,
-    bestScore: serverData.bestScore
-  };
-
   if (!process.env.ROUNDS) {
     // Set default number of rounds
     process.env.ROUNDS = '10';
@@ -24,6 +18,14 @@ export async function req_home (res: ServerResponse): Promise<void> {
   const maxRounds = (await getAllValidesImagesDirectories(process.env.RESOURCES)).length;
   // Get valid rounds number
   process.env.ROUNDS = String(Math.min(Math.max(Number(process.env.ROUNDS), 0), maxRounds));
+
+  const dataOnPage: any = {
+    quiz_name: process.env.QUIZ_NAME,
+    gameCounter: serverData.gameCounter,
+    bestScore: serverData.bestScore,
+    // Game can't start without a valid directory
+    button: Number(process.env.ROUNDS) > 0 ? '<a href="/game"><button>Start quiz</button></a>' : '<span>No valid image directory was found</span>' 
+  };
 
   // Create clean game data for start new game
   const cleanGameData: gameDataObject = {

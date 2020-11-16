@@ -1,6 +1,6 @@
 {
   "name": "memory-quiz",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Generic memory quiz server",
   "author": "PoissonPoisson",
   "license": "MIT",
@@ -9,6 +9,7 @@
     "TypeScript",
     "http server"
   ],
+  "main": "src/server.ts",
   "scripts": {
     "start": "nodemon build/server.js",
     "build": "npm run clear && npm run build-ts && npm run copy-views",
@@ -17,7 +18,6 @@
     "copy-views": "cp -r src/views/ build/views/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "main": "src/server.ts",
   "nodemonConfig": {
     "ignore": [
       "test/*",

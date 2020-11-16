@@ -22,6 +22,11 @@ export async function req_game (res: ServerResponse): Promise<void> {
   const itemList: string[] = (await getAllValidesImagesDirectories(process.env.RESOURCES));
   const itemUnusedList: string[] = itemList.filter(item => !gameData.alreadyUsed.includes(item));
 
+  // Chek if directory was removed 
+  if (gameData.rounds > itemList.length) {
+    gameData.rounds = itemList.length;
+  }
+
   // Select new random current item
   const currentItemIndex: number = Math.floor(Math.random() * itemUnusedList.length);
   gameData.currentItem = itemUnusedList[currentItemIndex];
@@ -37,7 +42,7 @@ export async function req_game (res: ServerResponse): Promise<void> {
   // Collect 4 quiz proposals
   // First is the selected object and the 3 others are chosen randomly.
   gameData.pruposedItems = [gameData.currentItem]
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < Math.min(3, itemList.length + i); i++) {
     const index: number = Math.floor(Math.random() * itemList.length);
     gameData.pruposedItems.push(itemList[index]);
     itemList.splice(index, 1);
