@@ -1,6 +1,6 @@
 {
   "name": "memory-quiz",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Generic memory quiz server",
   "author": "PoissonPoisson",
   "license": "MIT",
@@ -16,7 +16,7 @@
     "build-ts": "tsc",
     "clear": "rm -rf build/*",
     "copy-views": "cp -r src/views/ build/views/",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -r ts-node/register tests/**/*.spec.ts"
   },
   "nodemonConfig": {
     "ignore": [
@@ -26,12 +26,16 @@
     ]
   },
   "devDependencies": {
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.0.4",
     "@types/node": "^14.14.7",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.5"
   },
   "dependencies": {
+    "chai": "^4.2.0",
     "dotenv": "^8.2.0",
+    "mocha": "^8.2.1",
     "nodemon": "^2.0.6"
   }
 }

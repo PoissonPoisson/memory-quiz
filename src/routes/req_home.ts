@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'fs';
 import { ServerResponse } from 'http';
 import { promisify } from 'util';
-import { supplant, gameDataObject, getAllValidesImagesDirectories } from '../utils/util';
+import { supplant, gameDataObject, serverData, getAllValidesImagesDirectories } from '../utils/util';
 import { join } from 'path';
 
 const readFileAsync = promisify(readFile);
@@ -9,7 +9,7 @@ const writeFileAsync = promisify(writeFile);
 
 export async function req_home (res: ServerResponse): Promise<void> {
   const data: string = await readFileAsync(join(__dirname, '../../data.json'), 'utf-8');
-  const serverData: any = JSON.parse(data);
+  const serverData: serverData = JSON.parse(data);
 
   if (!process.env.ROUNDS) {
     // Set default number of rounds
@@ -19,7 +19,7 @@ export async function req_home (res: ServerResponse): Promise<void> {
   // Get valid rounds number
   process.env.ROUNDS = String(Math.min(Math.max(Number(process.env.ROUNDS), 0), maxRounds));
 
-  const dataOnPage: any = {
+  const dataOnPage: object = {
     quiz_name: process.env.QUIZ_NAME,
     gameCounter: serverData.gameCounter,
     bestScore: serverData.bestScore,

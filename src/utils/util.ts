@@ -12,9 +12,10 @@ const lstatAsync = promisify(lstat);
  * @param replace Object that containt markers name and replace values
  * @returns Formated string
  */
-export function supplant (message: string, replace: any): string {
+export function supplant (message: string, replace: object): string {
   for (const [key, value] of Object.entries(replace)) {
-    message = message.replace(new RegExp('\\{\\{\\s*' + key + '\\s*\\}\\}'), String(value));
+    // Regex use global flag for check all occurences of the match
+    message = message.replace(new RegExp('\\{\\{\\s*' + key + '\\s*\\}\\}', 'g'), String(value));
   }
   return message;
 }
@@ -29,6 +30,14 @@ export type gameDataObject = {
   pruposedItems: string[],
   score: number,
   rounds: number
+};
+
+/**
+ * Type of server global data.
+ */
+export type serverData = {
+  bestScore: number,
+  gameCounter: number
 };
 
 /**
@@ -66,11 +75,13 @@ export async function getAllValidesImagesDirectories (path: string): Promise<str
  * @return New shuffled array
  */
 export function shuffle (list: any[]): any[] {
+  // copy list in order not to empty the list outside of the function
+  const copyList = [...list];
   const randomArray: any[] = [];
-  while (list.length > 0) {
-    const index: number = Math.floor(Math.random() * list.length);
-    randomArray.push(list[index]);
-    list.splice(index, 1);
+  while (copyList.length > 0) {
+    const index: number = Math.floor(Math.random() * copyList.length);
+    randomArray.push(copyList[index]);
+    copyList.splice(index, 1);
   }
   return randomArray;
 }

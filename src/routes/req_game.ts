@@ -53,7 +53,7 @@ export async function req_game (res: ServerResponse): Promise<void> {
   // Save game data
   await writeFileAsync(join(__dirname, '../../game_data.json'), JSON.stringify(gameData, null, 2), 'utf-8');
 
-  const dataOnPage: any = {
+  const dataOnPage: object = {
     quiz_name: process.env.QUIZ_NAME,
     image: gameData.currentImage,
     counter: gameData.alreadyUsed.length + 1,

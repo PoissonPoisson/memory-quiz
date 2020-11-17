@@ -2,7 +2,7 @@ import { ServerResponse } from "http";
 import { ParsedUrlQuery } from "querystring";
 import { readFile, writeFile } from 'fs';
 import { promisify } from 'util';
-import { supplant, gameDataObject } from '../utils/util';
+import { supplant, gameDataObject, serverData } from '../utils/util';
 import { join } from 'path';
 
 const readFileAsync = promisify(readFile);
@@ -39,7 +39,7 @@ export async function req_result (res: ServerResponse, query: ParsedUrlQuery): P
   dataOnPage.score = gameData.score;
 
   data = await readFileAsync(join(__dirname, '../../data.json'), 'utf-8');
-  const serverData: any = JSON.parse(data);
+  const serverData: serverData = JSON.parse(data);
   
   // Show if game is finish
   if (gameData.alreadyUsed.length + 1 === Number(process.env.ROUNDS)) {
