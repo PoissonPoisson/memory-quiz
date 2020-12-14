@@ -4,12 +4,36 @@
   <head>
     <meta charset="utf-8"/>
     <title>{{ quiz_name }}</title>
+    <link rel="stylesheet" type="text/css" href="find_name_style.css"/>
+    <style type="text/css">
+      button:hover {
+        background-color: darkgray;
+      }
+      button {
+        cursor: pointer;
+      }
+      .buttons-line {
+        height: 40%;
+      }
+    </style>
   </head>
 
   <body>
-    <img src="{{ image }}" width="500" alt="Item image"/>
-    {{ buttons }}
-    <span>Counter : {{ counter }} / {{ rounds }}</span>
-    <span>Score : {{score }}</span>
+    <div id="container">
+      <div id="image-pannel">
+        <img src="{{ image }}" alt="Item image"/>
+      </div>
+      <div id="action-pannel">
+        {{ buttons }}
+        <div id="data-line">
+          <div>
+            <span>Counter : {{ counter }} / {{ rounds }}</span>
+          </div>
+          <div>
+            <span>Score : {{score }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

@@ -52,7 +52,7 @@ export async function req_game (res: ServerResponse): Promise<void> {
 
   // Save game data
   await writeFileAsync(join(__dirname, '../../game_data.json'), JSON.stringify(gameData, null, 2), 'utf-8');
-
+    
   const dataOnPage: object = {
     quiz_name: process.env.QUIZ_NAME,
     image: gameData.currentImage,
@@ -60,8 +60,11 @@ export async function req_game (res: ServerResponse): Promise<void> {
     rounds: process.env.ROUNDS,
     score: gameData.score,
     buttons: gameData.pruposedItems
-      // Create proposals buttons with item name, show specification on README.md
-      .map(item => `<a href="/result?selected=${item}"><button>${item.replace(/\_/g, ' ')}</button></a>`).join('')
+    // Create proposals buttons with item name, show specification on README.md
+      .map((item: string, index: number) => {
+        const content = `<div class="button"><a href="/result?selected=${item}"><button>${item.replace(/\_/g, ' ')}</button></a></div>`;
+        return index % 2 == 0 ? `<div class="buttons-line">${content}` : `${content}</div>`;
+      }).join('')
   };
 
   let page = await readFileAsync(join(__dirname, '../views/game_page.html'), 'utf-8');

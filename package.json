@@ -12,10 +12,11 @@
   "main": "src/server.ts",
   "scripts": {
     "start": "nodemon build/server.js",
-    "build": "npm run clear && npm run build-ts && npm run copy-views",
+    "build": "npm run clear && npm run build-ts && npm run copy-views && npm run copy-assets",
     "build-ts": "tsc",
     "clear": "rm -rf build/*",
     "copy-views": "cp -r src/views/ build/views/",
+    "copy-assets": "cp -r src/assets build/assets",
     "test": "mocha -r ts-node/register tests/**/*.spec.ts"
   },
   "nodemonConfig": {

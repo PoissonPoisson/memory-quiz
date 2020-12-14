@@ -16,25 +16,27 @@ export async function req_result (res: ServerResponse, query: ParsedUrlQuery): P
     quiz_name: process.env.QUIZ_NAME,
     image: gameData.currentImage,
     counter: gameData.alreadyUsed.length + 1,
-    rounds: process.env.ROUNDS,
-    buttons: ''
+    rounds: process.env.ROUNDS
   };
 
   if (query.selected === gameData.currentItem) {
     gameData.score++;
-    for (const item of gameData.pruposedItems) {
+    dataOnPage.buttons = gameData.pruposedItems.map((item: string, index: number) => {
       // Create proposals response buttons with item name, show specification on README.md
-      dataOnPage.buttons += `<button style="${item === gameData.currentItem ? 'background-color: green;' : ''}">${item.replace(/\_/g, ' ')}</button>`;
-    }
+      const content = `<div class="button"><button style="${item === gameData.currentItem ? 'background-color: green;' : ''}">${item.replace(/\_/g, ' ')}</button></div>`;
+      return index % 2 == 0 ? `<div class="buttons-line">${content}` : `${content}</div>`;
+    }).join('');
+
   } else {
-    for (const character of gameData.pruposedItems) {
+    dataOnPage.buttons = gameData.pruposedItems.map((item: string, index: number) => {
       // Create proposals response buttons with item name, show specification on README.md
-      dataOnPage.buttons += `<button style="${character === gameData.currentItem
+      const content = `<div class="button"><button style="${item === gameData.currentItem
         ? 'background-color: green;'
-        : character === query.selected
+        : item === query.selected
           ? 'background-color: red;'
-          : ''}">${character.replace(/\_/g, ' ')}</button>`;
-    }
+          : ''}">${item.replace(/\_/g, ' ')}</button></div>`;
+      return index % 2 == 0 ? `<div class="buttons-line">${content}` : `${content}</div>`;
+    }).join('');
   }
   dataOnPage.score = gameData.score;
 
@@ -48,9 +50,9 @@ export async function req_result (res: ServerResponse, query: ParsedUrlQuery): P
     if (gameData.score > serverData.bestScore) {
       serverData.bestScore = gameData.score;
     }
-    dataOnPage.nextStep = `<a href="/"><button>Home page</button></a>`;
+    dataOnPage.nextStep = `<a href="/"><button id="next-page-button">Home page</button></a>`;
   } else {
-    dataOnPage.nextStep = `<a href="/game"><button>Next Character</button></a>`;
+    dataOnPage.nextStep = `<a href="/game"><button id="next-page-button">Next Character</button></a>`;
   } 
 
   // Save game data

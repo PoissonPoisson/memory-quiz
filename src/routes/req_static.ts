@@ -21,7 +21,7 @@ export async function req_static (req: IncomingMessage, res: ServerResponse): Pr
       break;
     case '.css':
       type = 'text/css';
-      file = join(__dirname, file);
+      file = join(__dirname, '../assets/css', file);
       break;
     case '.png':
       type = 'image/png';
