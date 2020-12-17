@@ -6,8 +6,8 @@ require('dotenv').config();
 import { req_static } from './routes/req_static';
 import { req_error } from './routes/req_error';
 import { req_home } from './routes/req_home';
-import { req_game } from './routes/req_game';
-import { req_result } from './routes/req_result';
+import { req_find_name_game } from './routes/req_find_name_game';
+import { req_find_name_result } from './routes/req_find_name_result';
 
 const server: Server = createServer( async (req: IncomingMessage, res: ServerResponse): Promise<void> => {
   let request: UrlWithParsedQuery = parse(req.url, true);
@@ -19,11 +19,11 @@ const server: Server = createServer( async (req: IncomingMessage, res: ServerRes
       case '/':
         await req_home(res);
         break;
-      case '/game':
-        await req_game(res);
+      case '/find_name_game':
+        await req_find_name_game(res);
         break;
-      case '/result':
-        await req_result(res, request.query);
+      case '/find_name_result':
+        await req_find_name_result(res, request.query);
         break;
       default:
         await req_static(req, res);

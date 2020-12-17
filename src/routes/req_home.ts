@@ -24,7 +24,7 @@ export async function req_home (res: ServerResponse): Promise<void> {
     gameCounter: serverData.gameCounter,
     bestScore: serverData.bestScore,
     // Game can't start without a valid directory
-    button: Number(process.env.ROUNDS) > 0 ? '<a href="/game"><button>Start quiz</button></a>' : '<span>No valid image directory was found</span>' 
+    button: Number(process.env.ROUNDS) > 0 ? '<a href="/find_name_game"><button>Start quiz</button></a>' : '<span>No valid image directory was found</span>' 
   };
 
   // Create clean game data for start new game

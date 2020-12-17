@@ -10,7 +10,7 @@ const writeFileAsync = promisify(writeFile);
 const readFileAsync = promisify(readFile);
 const readdirAsync = promisify(readdir);
 
-export async function req_game (res: ServerResponse): Promise<void> {
+export async function req_find_name_game (res: ServerResponse): Promise<void> {
   const data: string = await readFileAsync(join(__dirname, '../../game_data.json'), 'utf-8');
   const gameData: gameDataObject = JSON.parse(data);
   
@@ -62,12 +62,12 @@ export async function req_game (res: ServerResponse): Promise<void> {
     buttons: gameData.pruposedItems
     // Create proposals buttons with item name, show specification on README.md
       .map((item: string, index: number) => {
-        const content = `<div class="button"><a href="/result?selected=${item}"><button>${item.replace(/\_/g, ' ')}</button></a></div>`;
+        const content = `<div class="button"><a href="/find_name_result?selected=${item}"><button>${item.replace(/\_/g, ' ')}</button></a></div>`;
         return index % 2 == 0 ? `<div class="buttons-line">${content}` : `${content}</div>`;
       }).join('')
   };
 
-  let page = await readFileAsync(join(__dirname, '../views/game_page.html'), 'utf-8');
+  let page = await readFileAsync(join(__dirname, '../views/find_name_game_page.html'), 'utf-8');
   // generate page
   page = supplant(page, dataOnPage);
 

@@ -8,7 +8,7 @@ import { join } from 'path';
 const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 
-export async function req_result (res: ServerResponse, query: ParsedUrlQuery): Promise<void> {
+export async function req_find_name_result (res: ServerResponse, query: ParsedUrlQuery): Promise<void> {
   let data: string = await readFileAsync(join(__dirname, '../../game_data.json'), 'utf-8');
   let gameData: gameDataObject = JSON.parse(data);
 
@@ -52,7 +52,7 @@ export async function req_result (res: ServerResponse, query: ParsedUrlQuery): P
     }
     dataOnPage.nextStep = `<a href="/"><button id="next-page-button">Home page</button></a>`;
   } else {
-    dataOnPage.nextStep = `<a href="/game"><button id="next-page-button">Next Character</button></a>`;
+    dataOnPage.nextStep = `<a href="/find_name_game"><button id="next-page-button">Next Character</button></a>`;
   } 
 
   // Save game data
@@ -60,7 +60,7 @@ export async function req_result (res: ServerResponse, query: ParsedUrlQuery): P
   // Save server data
   await writeFileAsync(join(__dirname, '../../data.json'), JSON.stringify(serverData, null, 2), 'utf-8');
 
-  let page = await readFileAsync(join(__dirname, '../views/result_page.html'), 'utf-8');
+  let page = await readFileAsync(join(__dirname, '../views/find_name_result_page.html'), 'utf-8');
   // Generate page
   page = supplant(page, dataOnPage);
 
