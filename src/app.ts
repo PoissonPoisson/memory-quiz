@@ -1,5 +1,6 @@
 import { createServer, IncomingMessage, Server, ServerResponse } from 'http';
 import { parse, UrlWithParsedQuery } from 'url';
+import logger from './utils/logger';
 
 require('dotenv').config();
 
@@ -9,10 +10,11 @@ import { req_home } from './routes/req_home';
 import { req_find_name_game } from './routes/req_find_name_game';
 import { req_find_name_result } from './routes/req_find_name_result';
 
-const server: Server = createServer( async (req: IncomingMessage, res: ServerResponse): Promise<void> => {
-  let request: UrlWithParsedQuery = parse(req.url, true);
+export const server: Server = createServer( async (req: IncomingMessage, res: ServerResponse): Promise<void> => {
+  const request: UrlWithParsedQuery = parse(req.url, true);
 
-	console.log(" URL : " + req.url);
+  logger.info('URL : %s', req.url);
+  logger.info('Pathname : %s', request.pathname);
 
   try {
     switch (request.pathname) {
@@ -20,26 +22,18 @@ const server: Server = createServer( async (req: IncomingMessage, res: ServerRes
         await req_home(res);
         break;
       case '/find_name_game':
+        process.env.GAME_MODE = 'find_name';
         await req_find_name_game(res);
         break;
       case '/find_name_result':
         await req_find_name_result(res, request.query);
         break;
       default:
-        await req_static(req, res);
+        await req_static(request.pathname, res);
         break;
     }
   } catch (e) {
-    console.error(' ERROR : ' + e.message);
-    console.error(' ERROR : ' + e.stack);
+    logger.error(e);
     await req_error(res);
-  }
-});
-
-server.listen(Number(process.env.PORT || 5000), (error?: any) => {
-  if (error) {
-    console.error('Server no listening : ' + error);
-  } else {
-    console.log('Server listening on port ' + process.env.PORT);
   }
 });
