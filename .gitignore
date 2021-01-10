@@ -1,5 +1,6 @@
 node_modules/
 build/
 .env
-data.json
-game_data.json
+**/*.json
+TODO.md
+**/*.log

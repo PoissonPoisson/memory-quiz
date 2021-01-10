@@ -1,9 +1,9 @@
 # About
 
 This is a generic memory quiz server.
-An http server in TypeScript for to **play quiz in local mode**.
+An http server in TypeScript for to **play quiz in local mode**. (No session management)
 
-I wanted to create this project because I play a game with a lot of characters (+112) and I don't have a good memory to remember the names of the characters, so I created this project.
+I wanted to create this project because I play a game with a lot of characters (+125) and I don't have a good memory to remember the names of the characters, so I created this project.
 
 Using my image directories, the game will give me 4 possible answers and the goal is to find the right character name, but it can also work with a lot of subjects, movies, etc.
 
@@ -13,6 +13,7 @@ To create a quiz you just have to respect the specifications in [Create a quiz](
 
 * Node.Js
 * Internet (to download packages)
+* Images folder ;)
 
 # Installation and run
 
@@ -23,12 +24,13 @@ To create a quiz you just have to respect the specifications in [Create a quiz](
 
 * #### Create an environment variable file `.env` at the root of the project and insert data
 
-| Variables | Data                         | Range                        |
-|:----------|:-----------------------------|:-----------------------------|
-| PORT      | Server port                  | 0 - 65535                    |
-| RESOURCES | Path to resources directory  | An existing directory on your computer |
-| QUIZ_NAME | Title in browser tab         | An string                    |
-| ROUNDS    | Number of rounds in the quiz | 0 - Number of subdirectories |
+| Variables | Data                         | Range                          | Default value |
+|:----------|:-----------------------------|:-------------------------------|:--------------|
+| PORT      | Server port                  | 0 - 65535                      | 5000          |
+| RESOURCES | Path to resources directory  | An existing directory on your computer | -     |
+| QUIZ_NAME | Title in browser tab         | An string                      | 'Memory Quiz' |
+| ROUNDS    | Number of rounds in the quiz | 0 - Number of subdirectories   | 10            |
+| NODE_ENV  | Runing mode                  | 'develop', 'production' or any | 'develop'     |
 
 For exemple :
 ```
@@ -36,6 +38,7 @@ PORT=5000
 RESOURCES=/home/images/quiz_images
 QUIZ_NAME="My super quiz"
 ROUNDS=10
+NODE_ENV=develop
 ```
 
 * Create an server data file `data.json` at the root of the project and copy example :
