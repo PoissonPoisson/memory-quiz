@@ -1,18 +1,21 @@
 import { ServerResponse } from "http";
-import { writeFile, readFile, readdir } from 'fs';
-import { supplant, gameDataObject, getAllValidesImagesDirectories, shuffle } from '../utils/util';
+import { readFile, readdir } from 'fs';
+import { supplant, getAllValidesImagesDirectories, shuffle } from '../utils/util';
 import { promisify } from 'util';
 import { join } from 'path';
+import { FindNameByImageGameData } from '../models/findNameByImageGameData.model';
+import { uuid } from 'uuidv4';
 
 require('dotenv').config();
 
-const writeFileAsync = promisify(writeFile);
 const readFileAsync = promisify(readFile);
 const readdirAsync = promisify(readdir);
 
 export async function req_find_name_game (res: ServerResponse): Promise<void> {
-  const data: string = await readFileAsync(join(__dirname, '../../game_data.json'), 'utf-8');
-  const gameData: gameDataObject = JSON.parse(data);
+  /*const data: string = await readFileAsync(join(__dirname, '../../find_name_game_data.json'), 'utf-8');
+  const gameData2: gameDataObject = JSON.parse(data);*/
+
+  const gameData = new FindNameByImageGameData(join(__dirname, '../../find_name_game_data.json'));
   
   if (gameData.currentItem) {
     gameData.alreadyUsed.push(gameData.currentItem);
@@ -37,7 +40,12 @@ export async function req_find_name_game (res: ServerResponse): Promise<void> {
   const images: string[] = (await readdirAsync(join(process.env.RESOURCES, gameData.currentItem), 'utf-8'))
     .filter(item => item.match(/[\w\.]+\.(png|jpe?g|gif|webp)$/i));
 
-  gameData.currentImage = images[Math.floor(Math.random() * images.length)];
+  // Remove old image
+  gameData.imagesData.clear();
+  // Add new image
+  gameData.imagesData.set(uuid(), join(process.env.RESOURCES, gameData.currentItem, images[Math.floor(Math.random() * images.length)]));
+
+  /*gameData.currentImage = images[Math.floor(Math.random() * images.length)];*/
 
   // Collect 4 quiz proposals
   // First is the selected object and the 3 others are chosen randomly.
@@ -51,11 +59,12 @@ export async function req_find_name_game (res: ServerResponse): Promise<void> {
   gameData.pruposedItems = shuffle(gameData.pruposedItems);
 
   // Save game data
-  await writeFileAsync(join(__dirname, '../../game_data.json'), JSON.stringify(gameData, null, 2), 'utf-8');
-    
+  await gameData.save(join(__dirname, '../../find_name_game_data.json'));
+  /*await writeFileAsync(join(__dirname, '../../find_name_game_data.json'), JSON.stringify(gameData, null, 2), 'utf-8');*/
+ 
   const dataOnPage: object = {
     quiz_name: process.env.QUIZ_NAME,
-    image: gameData.currentImage,
+    image: '/image/' + gameData.imagesData.keys().next().value,
     counter: gameData.alreadyUsed.length + 1,
     rounds: process.env.ROUNDS,
     score: gameData.score,

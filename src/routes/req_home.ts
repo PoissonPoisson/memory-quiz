@@ -1,44 +1,37 @@
-import { readFile, writeFile } from 'fs';
-import { ServerResponse } from 'http';
-import { promisify } from 'util';
-import { supplant, gameDataObject, serverData, getAllValidesImagesDirectories } from '../utils/util';
 import { join } from 'path';
+import { readFile } from 'fs';
+import { promisify } from 'util';
+import { ServerResponse } from 'http';
+import { FindImageByNameGameData } from '../models/findImageByNameGameData.model';
+import { FindNameByImageGameData } from '../models/findNameByImageGameData.model';
+import { supplant, ServerData, getAllValidesImagesDirectories } from '../utils/util';
+
+require('dotenv').config();
 
 const readFileAsync = promisify(readFile);
-const writeFileAsync = promisify(writeFile);
 
 export async function req_home (res: ServerResponse): Promise<void> {
-  const data: string = await readFileAsync(join(__dirname, '../../data.json'), 'utf-8');
-  const serverData: serverData = JSON.parse(data);
+  const serverData: ServerData = JSON.parse((await readFileAsync(join(__dirname, '../../data.json'), 'utf-8')));
 
-  if (!process.env.ROUNDS) {
-    // Set default number of rounds
-    process.env.ROUNDS = '10';
-  }
   const maxRounds = (await getAllValidesImagesDirectories(process.env.RESOURCES)).length;
   // Get valid rounds number
-  process.env.ROUNDS = String(Math.min(Math.max(Number(process.env.ROUNDS), 0), maxRounds));
+  const rounds: number = Math.min(Math.max(Number(process.env.ROUNDS), 0), maxRounds);
+  process.env.ROUNDS = String(rounds);
 
   const dataOnPage: object = {
-    quiz_name: process.env.QUIZ_NAME,
+    // Quiz name or default name
+    quiz_name: process.env.QUIZ_NAME || 'Memory quiz',
     gameCounter: serverData.gameCounter,
     bestScore: serverData.bestScore,
     // Game can't start without a valid directory
-    button: Number(process.env.ROUNDS) > 0 ? '<a href="/find_name_game"><button>Start quiz</button></a>' : '<span>No valid image directory was found</span>' 
+    buttons: rounds > 0
+      ? '<a href="/find_name_game"><button>Find name quiz</button></a><a href="/find_image_game"><button>Find image quiz</button></a>'
+      : '<span>No valid image directory was found</span>'
   };
 
-  // Create clean game data for start new game
-  const cleanGameData: gameDataObject = {
-    currentItem: null,
-    currentImage: null,
-    alreadyUsed: [],
-    pruposedItems: [],
-    score: 0,
-    rounds : Number(process.env.ROUNDS)
-  };
-
-  // Save game data
-  await writeFileAsync(join(__dirname, '../../game_data.json'), JSON.stringify(cleanGameData, null, 2), 'utf-8');
+  // Create and save clean games data for start new game
+  await new FindImageByNameGameData('', rounds).save(join(__dirname, '../../find_image_game_data.json'));
+  await new FindNameByImageGameData('', rounds).save(join(__dirname, '../../find_name_game_data.json'));
 
   let page: string = await readFileAsync(join(__dirname, '../views/home_page.html'), 'utf-8');
   // generate page

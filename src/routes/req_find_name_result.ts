@@ -2,19 +2,20 @@ import { ServerResponse } from "http";
 import { ParsedUrlQuery } from "querystring";
 import { readFile, writeFile } from 'fs';
 import { promisify } from 'util';
-import { supplant, gameDataObject, serverData } from '../utils/util';
+import { supplant, ServerData } from '../utils/util';
 import { join } from 'path';
+import { FindNameByImageGameData } from '../models/findNameByImageGameData.model';
 
 const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 
 export async function req_find_name_result (res: ServerResponse, query: ParsedUrlQuery): Promise<void> {
-  let data: string = await readFileAsync(join(__dirname, '../../game_data.json'), 'utf-8');
-  let gameData: gameDataObject = JSON.parse(data);
+
+  const gameData = new FindNameByImageGameData(join(__dirname, '../../find_name_game_data.json'));
 
   const dataOnPage: any = {
     quiz_name: process.env.QUIZ_NAME,
-    image: gameData.currentImage,
+    image: '/image/' + gameData.imagesData.keys().next().value,
     counter: gameData.alreadyUsed.length + 1,
     rounds: process.env.ROUNDS
   };
@@ -40,8 +41,8 @@ export async function req_find_name_result (res: ServerResponse, query: ParsedUr
   }
   dataOnPage.score = gameData.score;
 
-  data = await readFileAsync(join(__dirname, '../../data.json'), 'utf-8');
-  const serverData: serverData = JSON.parse(data);
+  let data = await readFileAsync(join(__dirname, '../../data.json'), 'utf-8');
+  const serverData: ServerData = JSON.parse(data);
   
   // Show if game is finish
   if (gameData.alreadyUsed.length + 1 === Number(process.env.ROUNDS)) {
@@ -56,7 +57,8 @@ export async function req_find_name_result (res: ServerResponse, query: ParsedUr
   } 
 
   // Save game data
-  await writeFileAsync(join(__dirname, '../../game_data.json'), JSON.stringify(gameData, null, 2), 'utf-8');
+  await gameData.save(join(__dirname, '../../find_name_game_data.json'));
+ /* await writeFileAsync(join(__dirname, '../../find_name_game_data.json'), JSON.stringify(gameData, null, 2), 'utf-8');*/
   // Save server data
   await writeFileAsync(join(__dirname, '../../data.json'), JSON.stringify(serverData, null, 2), 'utf-8');
 

@@ -6,7 +6,7 @@ const readdirAsync = promisify(readdir);
 const lstatAsync = promisify(lstat);
 
 /**
- * Replace markers in string with object values
+ * Replace markers in string with object values.
  * Ex : supplant("{{ marker }}", { marker: "data" }) => "data"
  * @param content String with markers
  * @param replace Object that containt markers name and replace values
@@ -21,24 +21,17 @@ export function supplant (message: string, replace: object): string {
 }
 
 /**
- * Type of game data.
+ * Interface of server global data.
  */
-export type gameDataObject = {
-  currentItem?: string,
-  currentImage?: string,
-  alreadyUsed: string[],
-  pruposedItems: string[],
-  score: number,
-  rounds: number
-};
-
-/**
- * Type of server global data.
- */
-export type serverData = {
-  bestScore: number,
-  gameCounter: number
-};
+export interface ServerData {
+  /**
+   * Best score in the server.
+   * /!\ Warning if change number of rounds in environment variables file /!\
+   */
+  bestScore: number;
+  /** Count number of games played. */
+  gameCounter: number;
+}
 
 /**
  * Get all directory with valid name and content.
@@ -54,14 +47,15 @@ export async function getAllValidesImagesDirectories (path: string): Promise<str
   // Get all valid subdirectories in RESOURCES directory
   // Show valid directory specification in README.md 
   const directories: string[] = (await readdirAsync(path, 'utf-8'))
+    // Use 'Σ' caracter because I have a directory with this caracter :P
     .filter(directory => directory.match(/^[A-Z]\w+Σ?$/));
 
   const validDirectories: string[] = [];
   for (const directory of directories) {
-    // get all content of the directory
+    // Get all content of the directory
     const directoryData: string[] = await readdirAsync(join(path, directory));
 
-    // if find one or more valid image, add directory
+    // If find one or more valid image, add directory
     if (directoryData.find(data => data.match(/[\w\.]+\.(png|jpe?g|gif|webp)$/i))) {
       validDirectories.push(directory);
     }
@@ -75,7 +69,7 @@ export async function getAllValidesImagesDirectories (path: string): Promise<str
  * @return New shuffled array
  */
 export function shuffle (list: any[]): any[] {
-  // copy list in order not to empty the list outside of the function
+  // Copy list in order not to empty the list outside of the function
   const copyList = [...list];
   const randomArray: any[] = [];
   while (copyList.length > 0) {
