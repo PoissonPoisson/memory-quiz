@@ -1,6 +1,6 @@
 {
   "name": "memory-quiz",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Generic memory quiz server",
   "author": "PoissonPoisson",
   "license": "MIT",
@@ -11,7 +11,8 @@
   ],
   "main": "src/main.ts",
   "scripts": {
-    "start": "nodemon build/main.js",
+    "start": "node build/main.js",
+    "start:dev": "nodemon",
     "build": "npm run clear && npm run build-ts && npm run copy-views && npm run copy-assets",
     "build-ts": "tsc",
     "clear": "rm -rf build/*",
@@ -20,11 +21,13 @@
     "test": "mocha -r ts-node/register tests/**/*.spec.ts"
   },
   "nodemonConfig": {
+    "watch": ["src"],
+    "ext": ".ts",
     "ignore": [
-      "test/*",
-      "src/",
+      "*.spec.ts",
       "*.json"
-    ]
+    ],
+    "exec": "ts-node ./src/main.ts"
   },
   "devDependencies": {
     "@types/chai": "^4.2.14",
@@ -32,14 +35,14 @@
     "@types/node": "^14.14.7",
     "@types/uuidv4": "^5.0.0",
     "@types/winston": "^2.4.4",
+    "chai": "^4.2.0",
+    "mocha": "^8.2.1",
+    "nodemon": "^2.0.7",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.5"
   },
   "dependencies": {
-    "chai": "^4.2.0",
     "dotenv": "^8.2.0",
-    "mocha": "^8.2.1",
-    "nodemon": "^2.0.6",
     "uuidv4": "^6.2.6",
     "winston": "^3.3.3"
   }
