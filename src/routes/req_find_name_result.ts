@@ -2,16 +2,18 @@ import { ServerResponse } from "http";
 import { ParsedUrlQuery } from "querystring";
 import { readFile, writeFile } from 'fs';
 import { promisify } from 'util';
-import { supplant, ServerData } from '../utils/util';
+import { supplant } from '../utils/util';
 import { join } from 'path';
 import { FindNameByImageGameData } from '../models/findNameByImageGameData.model';
+import { ServerData } from '../models/serverData.model';
 
 const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 
 export async function req_find_name_result (res: ServerResponse, query: ParsedUrlQuery): Promise<void> {
 
-  const gameData = new FindNameByImageGameData(join(__dirname, '../../find_name_game_data.json'));
+  const gameDataPath: string = join(__dirname, '../../find_name_game_data.json');
+  const gameData = new FindNameByImageGameData(gameDataPath);
 
   const dataOnPage: any = {
     quiz_name: process.env.QUIZ_NAME,
@@ -41,8 +43,8 @@ export async function req_find_name_result (res: ServerResponse, query: ParsedUr
   }
   dataOnPage.score = gameData.score;
 
-  let data = await readFileAsync(join(__dirname, '../../data.json'), 'utf-8');
-  const serverData: ServerData = JSON.parse(data);
+  const serverDataPath: string = join(__dirname, '../../data.json');
+  const serverData: ServerData = JSON.parse((await readFileAsync(serverDataPath, 'utf-8')));
   
   // Show if game is finish
   if (gameData.alreadyUsed.length + 1 === Number(process.env.ROUNDS)) {
@@ -53,14 +55,13 @@ export async function req_find_name_result (res: ServerResponse, query: ParsedUr
     }
     dataOnPage.nextStep = `<a href="/"><button id="next-page-button">Home page</button></a>`;
   } else {
-    dataOnPage.nextStep = `<a href="/find_name_game"><button id="next-page-button">Next Character</button></a>`;
+    dataOnPage.nextStep = `<a href="/find_name_game"><button id="next-page-button">Next</button></a>`;
   } 
 
   // Save game data
-  await gameData.save(join(__dirname, '../../find_name_game_data.json'));
- /* await writeFileAsync(join(__dirname, '../../find_name_game_data.json'), JSON.stringify(gameData, null, 2), 'utf-8');*/
+  await gameData.save(gameDataPath);
   // Save server data
-  await writeFileAsync(join(__dirname, '../../data.json'), JSON.stringify(serverData, null, 2), 'utf-8');
+  await writeFileAsync(serverDataPath, JSON.stringify(serverData, null, 2), 'utf-8');
 
   let page = await readFileAsync(join(__dirname, '../views/find_name_result_page.html'), 'utf-8');
   // Generate page

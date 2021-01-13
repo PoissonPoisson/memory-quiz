@@ -11,8 +11,8 @@ To create a quiz you just have to respect the specifications in [Create a quiz](
 
 # Required
 
-* Node.Js
-* Internet (to download packages)
+* Node.js (version 14.x LTS recommended)
+* Internet (just to download the packages)
 * Images folder ;)
 
 # Installation and run
@@ -24,7 +24,7 @@ To create a quiz you just have to respect the specifications in [Create a quiz](
 
 * #### Create an environment variable file `.env` at the root of the project and insert data
 
-| Variables | Data                         | Range                          | Default value |
+| Variables | Data                         | Value                          | Default value |
 |:----------|:-----------------------------|:-------------------------------|:--------------|
 | PORT      | Server port                  | 0 - 65535                      | 5000          |
 | RESOURCES | Path to resources directory  | An existing directory on your computer | -     |
@@ -54,7 +54,7 @@ NODE_ENV=develop
 > npm install
 ```
 
-* Build Server
+* Build server
 ```
 > npm run build
 ```
@@ -62,6 +62,11 @@ NODE_ENV=develop
 * Start server
 ```
 > npm start
+```
+
+In no production mode, you can start the server without build and start
+```
+> npm run start:dev
 ```
 
 # Create a quiz

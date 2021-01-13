@@ -1,6 +1,6 @@
 import { ServerResponse } from "http";
-import { readFile, readdir } from 'fs';
-import { supplant, getAllValidesImagesDirectories, shuffle } from '../utils/util';
+import { readFile } from 'fs';
+import { supplant, getAllValidesImagesDirectories, getRandomImage } from '../utils/util';
 import { promisify } from 'util';
 import { join } from 'path';
 import { FindNameByImageGameData } from '../models/findNameByImageGameData.model';
@@ -9,20 +9,17 @@ import { uuid } from 'uuidv4';
 require('dotenv').config();
 
 const readFileAsync = promisify(readFile);
-const readdirAsync = promisify(readdir);
 
 export async function req_find_name_game (res: ServerResponse): Promise<void> {
-  /*const data: string = await readFileAsync(join(__dirname, '../../find_name_game_data.json'), 'utf-8');
-  const gameData2: gameDataObject = JSON.parse(data);*/
+  const gameDataPath: string = join(__dirname, '../../find_name_game_data.json');
+  const gameData = new FindNameByImageGameData(gameDataPath);
 
-  const gameData = new FindNameByImageGameData(join(__dirname, '../../find_name_game_data.json'));
-  
   if (gameData.currentItem) {
     gameData.alreadyUsed.push(gameData.currentItem);
   }
 
   // List of item images directories
-  const itemList: string[] = (await getAllValidesImagesDirectories(process.env.RESOURCES));
+  const itemList: string[] = await getAllValidesImagesDirectories(process.env.RESOURCES);
   const itemUnusedList: string[] = itemList.filter(item => !gameData.alreadyUsed.includes(item));
 
   // Chek if directory was removed 
@@ -34,35 +31,28 @@ export async function req_find_name_game (res: ServerResponse): Promise<void> {
   const currentItemIndex: number = Math.floor(Math.random() * itemUnusedList.length);
   gameData.currentItem = itemUnusedList[currentItemIndex];
   itemUnusedList.splice(currentItemIndex, 1);
+  // Remove current item from item list
   itemList.splice(itemList.findIndex(i => i === gameData.currentItem), 1);
-
-  // List of images for the current item
-  const images: string[] = (await readdirAsync(join(process.env.RESOURCES, gameData.currentItem), 'utf-8'))
-    .filter(item => item.match(/[\w\.]+\.(png|jpe?g|gif|webp)$/i));
 
   // Remove old image
   gameData.imagesData.clear();
   // Add new image
-  gameData.imagesData.set(uuid(), join(process.env.RESOURCES, gameData.currentItem, images[Math.floor(Math.random() * images.length)]));
+  gameData.imagesData.set(uuid(), (await getRandomImage(join(process.env.RESOURCES, gameData.currentItem))));
 
-  /*gameData.currentImage = images[Math.floor(Math.random() * images.length)];*/
-
-  // Collect 4 quiz proposals
-  // First is the selected object and the 3 others are chosen randomly.
-  gameData.pruposedItems = [gameData.currentItem]
+  // Collect 3 random false proposals
+  gameData.pruposedItems = []
   for (let i = 0; i < Math.min(3, itemList.length + i); i++) {
     const index: number = Math.floor(Math.random() * itemList.length);
     gameData.pruposedItems.push(itemList[index]);
     itemList.splice(index, 1);
   }
-  // Shuffles the order of the proposals
-  gameData.pruposedItems = shuffle(gameData.pruposedItems);
+  // Add current item in pruposed item list
+  gameData.pruposedItems.splice(Math.floor(Math.random() * (gameData.pruposedItems.length + 1)), 0, gameData.currentItem);
 
   // Save game data
-  await gameData.save(join(__dirname, '../../find_name_game_data.json'));
-  /*await writeFileAsync(join(__dirname, '../../find_name_game_data.json'), JSON.stringify(gameData, null, 2), 'utf-8');*/
+  await gameData.save(gameDataPath);
  
-  const dataOnPage: object = {
+  const dataOnPage = {
     quiz_name: process.env.QUIZ_NAME,
     image: '/image/' + gameData.imagesData.keys().next().value,
     counter: gameData.alreadyUsed.length + 1,
@@ -77,7 +67,7 @@ export async function req_find_name_game (res: ServerResponse): Promise<void> {
   };
 
   let page = await readFileAsync(join(__dirname, '../views/find_name_game_page.html'), 'utf-8');
-  // generate page
+  // Generate page
   page = supplant(page, dataOnPage);
 
   res.writeHead(200, { 'Content-Type': 'text/html' });

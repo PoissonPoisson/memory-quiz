@@ -1,9 +1,11 @@
-import { readdir, existsSync, lstat } from 'fs';
+import { readdir } from 'fs';
 import { join } from 'path';
 import { promisify } from 'util'; 
+import logger from './logger';
 
 const readdirAsync = promisify(readdir);
-const lstatAsync = promisify(lstat);
+
+const validImageRegex: RegExp = /[\w\.]+\.(png|jpe?g|gif|webp)$/i;
 
 /**
  * Replace markers in string with object values.
@@ -21,61 +23,47 @@ export function supplant (message: string, replace: object): string {
 }
 
 /**
- * Interface of server global data.
- */
-export interface ServerData {
-  /**
-   * Best score in the server.
-   * /!\ Warning if change number of rounds in environment variables file /!\
-   */
-  bestScore: number;
-  /** Count number of games played. */
-  gameCounter: number;
-}
-
-/**
  * Get all directory with valid name and content.
  * @param path Directory path
  */
 export async function getAllValidesImagesDirectories (path: string): Promise<string[]> {
-  if (!path ||
-      !existsSync(path) ||
-      !(await lstatAsync(path)).isDirectory()) {
-    throw new Error('Invalid RESOURCES path in environment file');
-  }
-
-  // Get all valid subdirectories in RESOURCES directory
-  // Show valid directory specification in README.md 
-  const directories: string[] = (await readdirAsync(path, 'utf-8'))
-    // Use 'Σ' caracter because I have a directory with this caracter :P
-    .filter(directory => directory.match(/^[A-Z]\w+Σ?$/));
-
   const validDirectories: string[] = [];
-  for (const directory of directories) {
-    // Get all content of the directory
-    const directoryData: string[] = await readdirAsync(join(path, directory));
+  try {
+    // Get all valid subdirectories in RESOURCES directory
+    // Show valid directory specification in README.md 
+    const directories: string[] = (await readdirAsync(path, 'utf-8'))
+      // Use 'Σ' caracter because I have a directory with this caracter :P
+      .filter(directory => directory.match(/^[A-Z]\w+Σ?$/));
 
-    // If find one or more valid image, add directory
-    if (directoryData.find(data => data.match(/[\w\.]+\.(png|jpe?g|gif|webp)$/i))) {
-      validDirectories.push(directory);
+    for (const directory of directories) {
+      // Get all content of the directory
+      const directoryData: string[] = await readdirAsync(join(path, directory));
+    
+      // If find one or more valid image, add directory
+      if (directoryData.find(data => data.match(validImageRegex))) {
+        validDirectories.push(directory);
+      }
     }
+  } catch (e) {
+    logger.error(e);
   }
-
   return validDirectories;
 }
 
 /**
- * Shuffle the order of the array's elements.
- * @return New shuffled array
+ * Get a random image in the specified directory. 
+ * @param Image directory path
+ * @returns File name (joined to path)
  */
-export function shuffle (list: any[]): any[] {
-  // Copy list in order not to empty the list outside of the function
-  const copyList = [...list];
-  const randomArray: any[] = [];
-  while (copyList.length > 0) {
-    const index: number = Math.floor(Math.random() * copyList.length);
-    randomArray.push(copyList[index]);
-    copyList.splice(index, 1);
+export async function getRandomImage(path: string): Promise<string> {
+  try {
+    const images: string[] = (await readdirAsync(path, 'utf-8'))
+      .filter(item => item.match(validImageRegex));
+  
+    return join(path, images[Math.floor(Math.random() * images.length)]);
+
+  } catch(e) {
+    logger.error(e);
   }
-  return randomArray;
+  return null;
 }

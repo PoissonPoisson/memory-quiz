@@ -43,7 +43,7 @@ export class FindNameByImageGameData implements ImagesData {
       this.alreadyUsed = [];
       this.pruposedItems = [];
       this.score = 0;
-      this.rounds = rounds || 10;
+      this.rounds = rounds || Number(process.env.ROUNDS);
       this.logger.info('Data successfully created in %s', FindNameByImageGameData.name);
     }
   }

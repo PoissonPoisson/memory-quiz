@@ -1,4 +1,4 @@
-import { supplant, shuffle } from '../src/utils/util';
+import { supplant } from '../src/utils/util';
 import { expect, assert } from 'chai';
 
 describe('Test supplant function', () => {
@@ -84,17 +84,5 @@ describe('Test supplant function', () => {
 
     assert.throws(() => { supplant('{{ marker }}', null) }, Error);
     assert.throws(() => { supplant('{{ marker }}', undefined) }, Error);
-  });
-});
-
-describe('Test shuffle function', () => {
-  it('Should retun same array content', () => {
-    const baseArray: number[] = [1, 2, 3, 4, 5];
-    const sut: number[] = shuffle(baseArray);
-
-    expect(sut.length).to.be.equal(baseArray.length);
-    for (const item of baseArray) {
-      expect(sut.includes(item)).to.be.true;
-    }
   });
 });
