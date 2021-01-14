@@ -1,13 +1,16 @@
 # About
 
 This is a generic memory quiz server.
-An http server in TypeScript for to **play quiz in local mode**. (No session management)
+Which is an http server in TypeScript to **play quiz in local mode**. (No session management)
 
 I wanted to create this project because I play a game with a lot of characters (+125) and I don't have a good memory to remember the names of the characters, so I created this project.
 
-Using my image directories, the game will give me 4 possible answers and the goal is to find the right character name, but it can also work with a lot of subjects, movies, etc.
+I have created two game modes by using my image directories :
+* In the first game mode I show an image and 4 possibles item names answers and the goal is to find the right item name.
 
-To create a quiz you just have to respect the specifications in [Create a quiz](#Create-a-quiz).
+* In the seoncd game mode I show one item name and 4 possibles item images answers and the goal is to find the right item image.
+
+To create a quiz, you just have to follow the specifications in [Create a quiz](#Create-a-quiz).
 
 # Required
 

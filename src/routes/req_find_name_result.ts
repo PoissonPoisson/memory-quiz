@@ -47,7 +47,7 @@ export async function req_find_name_result (res: ServerResponse, query: ParsedUr
   const serverData: ServerData = JSON.parse((await readFileAsync(serverDataPath, 'utf-8')));
   
   // Show if game is finish
-  if (gameData.alreadyUsed.length + 1 === Number(process.env.ROUNDS)) {
+  if (gameData.alreadyUsed.length + 1 >= Number(process.env.ROUNDS)) {
     serverData.gameCounter++;
     // Show if high score is exceeded
     if (gameData.score > serverData.bestScore) {

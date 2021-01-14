@@ -1,23 +1,25 @@
 import { readFile } from 'fs';
-import { parse } from 'url';
 import { promisify } from 'util';
 import {  ServerResponse } from 'http';
 import { join, extname } from 'path';
-import { isUuid } from 'uuidv4';
+import { regex } from 'uuidv4';
 import { FindNameByImageGameData } from '../models/findNameByImageGameData.model';
+import { FindImageByNameGameData } from '../models/findImageByNameGameData.model';
 import logger from '../utils/logger';
 
 require('dotenv').config();
 
 const readFileAsync = promisify(readFile);
-
 export async function req_static (pathname: string, res: ServerResponse): Promise<void> {
   let type: string;
   let file: string = pathname;
   
-  if (pathname.startsWith('/image/') && isUuid(pathname.split('/')[2]) ) {
+  if (pathname.startsWith('/image/') && pathname.split('/')[2].match(regex.v4) ) {
     if (process.env.GAME_MODE === 'find_name') {
       file = new FindNameByImageGameData(join(__dirname, '../../find_name_game_data.json')).imagesData.get(pathname.split('/')[2]);
+
+    } else if (process.env.GAME_MODE === 'find_image') {
+      file = new FindImageByNameGameData(join(__dirname, '../../find_image_game_data.json')).imagesData.get(pathname.split('/')[2]);
     }
   }
 
@@ -45,7 +47,7 @@ export async function req_static (pathname: string, res: ServerResponse): Promis
       break;
   }
 
-  logger.info('req_static : %s', file);
+  logger.debug('req_static file data : %s', file);
 
   try {
     const resource = await readFileAsync(file);
