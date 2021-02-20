@@ -10,7 +10,7 @@ const logger = createLogger({
     format.splat(),
     format.json()),
     transports: [
-      new transports.File({ filename: 'info.log', level: 'info' })
+      new transports.File({ filename: 'info.log', level: 'warn' })
     ]
 });
 
@@ -18,8 +18,8 @@ if (process.env.NODE_ENV !== 'production') {
   logger.add(new transports.Console({
     format: format.combine(
       format.colorize(),
-      format.simple(),
-      format.errors({ stack: false })
+      format.simple()/*,
+      format.errors({ stack: false })*/
     )
   }));
 }

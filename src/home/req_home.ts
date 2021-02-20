@@ -2,11 +2,11 @@ import { join } from 'path';
 import { readFile, writeFile } from 'fs';
 import { promisify } from 'util';
 import { ServerResponse } from 'http';
-import { FindImageByNameGameData } from '../models/findImageByNameGameData.model';
-import { FindNameByImageGameData } from '../models/findNameByImageGameData.model';
-import { supplant, getAllValidesImagesDirectories } from '../utils/util';
-import { ServerData } from '../models/serverData.model';
-import logger from '../utils/logger';
+import { FindImageByNameGameData } from '../find_image/findImageByNameGameData.model';
+import { FindNameByImageGameData } from '../find_name/findNameByImageGameData.model';
+import { supplant, getAllValidesImagesDirectories } from '../common/utils/util';
+import { ServerData } from '../common/models/serverData.model';
+import logger from '../common/utils/logger';
 
 require('dotenv').config();
 
@@ -49,7 +49,7 @@ export async function req_home (res: ServerResponse): Promise<void> {
   await new FindImageByNameGameData('', rounds).save(join(__dirname, '../../find_image_game_data.json'));
   await new FindNameByImageGameData('', rounds).save(join(__dirname, '../../find_name_game_data.json'));
 
-  let page: string = await readFileAsync(join(__dirname, '../views/home_page.html'), 'utf-8');
+  let page: string = await readFileAsync(join(__dirname, './home_page.html'), 'utf-8');
   // generate page
   page = supplant(page, dataOnPage);
 

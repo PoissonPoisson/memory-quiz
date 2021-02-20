@@ -1,11 +1,10 @@
 import { ServerResponse } from 'http';
 import { readFile } from 'fs';
-import { supplant, getAllValidesImagesDirectories, getRandomImage } from '../utils/util';
+import { supplant, getAllValidesImagesDirectories, getRandomImage } from '../common/utils/util';
 import { promisify } from 'util';
 import { join } from 'path';
-import { FindImageByNameGameData } from '../models/findImageByNameGameData.model';
-import { uuid } from 'uuidv4';
-import logger from '../utils/logger';
+import { FindImageByNameGameData } from './findImageByNameGameData.model';
+import logger from '../common/utils/logger';
 
 require('dotenv').config();
 
@@ -58,8 +57,8 @@ export async function req_find_image_game (res: ServerResponse): Promise<void> {
   };
 
   // Generate and set images data from pruposed items
-  await Promise.all(pruposedItems.map(async item => {
-    gameData.imagesData.set(uuid(), (await getRandomImage(join(process.env.RESOURCES, item))));
+  await Promise.all(pruposedItems.map(async (item, id) => {
+    gameData.imagesData.set(String(id), (await getRandomImage(join(process.env.RESOURCES, item))));
   }));
   logger.debug('gameData images count : %d', gameData.imagesData.size);
 
@@ -69,19 +68,9 @@ export async function req_find_image_game (res: ServerResponse): Promise<void> {
     dataOnPage.buttons += index % 2 == 0 ? `<div class="buttons-line">${content}` : `${content}</div>`;
   });
 
-  /*
-  for(let i = 0; i < pruposedItems.length; i++) {
-    const imageId: string = uuid();
-    gameData.imagesData.set(imageId, (await getRandomImage(join(process.env.RESOURCES, pruposedItems[i]))));
-
-    const content = `<div class="button"><a href="/find_image_result?selected=${imageId}"><button><img src="/image/${imageId}"/></button></a></div>`;
-    dataOnPage.buttons += i % 2 == 0 ? `<div class="buttons-line">${content}` : `${content}</div>`;
-  }
-  */
-
   await gameData.save(gameDataPath);
 
-  let page: string = await readFileAsync(join(__dirname, '../views/find_image_game_page.html'), 'utf-8');
+  let page: string = await readFileAsync(join(__dirname, './find_image_game_page.html'), 'utf-8');
   // Generate page
   page = supplant(page, dataOnPage);
 

@@ -1,10 +1,9 @@
 import { ServerResponse } from "http";
 import { readFile } from 'fs';
-import { supplant, getAllValidesImagesDirectories, getRandomImage } from '../utils/util';
+import { supplant, getAllValidesImagesDirectories, getRandomImage } from '../common/utils/util';
 import { promisify } from 'util';
 import { join } from 'path';
-import { FindNameByImageGameData } from '../models/findNameByImageGameData.model';
-import { uuid } from 'uuidv4';
+import { FindNameByImageGameData } from './findNameByImageGameData.model';
 
 require('dotenv').config();
 
@@ -37,7 +36,7 @@ export async function req_find_name_game (res: ServerResponse): Promise<void> {
   // Remove old image
   gameData.imagesData.clear();
   // Add new image
-  gameData.imagesData.set(uuid(), (await getRandomImage(join(process.env.RESOURCES, gameData.currentItem))));
+  gameData.imagesData.set('0', (await getRandomImage(join(process.env.RESOURCES, gameData.currentItem))));
 
   // Collect 3 random false proposals
   gameData.pruposedItems = []
@@ -66,7 +65,7 @@ export async function req_find_name_game (res: ServerResponse): Promise<void> {
       }).join('')
   };
 
-  let page = await readFileAsync(join(__dirname, '../views/find_name_game_page.html'), 'utf-8');
+  let page = await readFileAsync(join(__dirname, './find_name_game_page.html'), 'utf-8');
   // Generate page
   page = supplant(page, dataOnPage);
 

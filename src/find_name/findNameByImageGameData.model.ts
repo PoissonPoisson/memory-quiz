@@ -1,8 +1,8 @@
 import { readFileSync, writeFile } from 'fs';
-import { ImagesData } from './ImagesData.model';
+import { ImagesData } from '../common/models/ImagesData.model';
 import { promisify } from 'util';
 import { Logger } from 'winston';
-import { default as defaultLogger } from '../utils/logger';
+import { default as defaultLogger } from '../common/utils/logger';
 
 const writeFileAsync = promisify(writeFile);
 
@@ -34,7 +34,7 @@ export class FindNameByImageGameData implements ImagesData {
       this.pruposedItems = data.pruposedItems;
       this.score = data.score;
       this.rounds = data.rounds;
-      this.logger.info('Data successfully deserialized in %s', FindNameByImageGameData.name);
+      this.logger.debug('Data successfully deserialized in %s', FindNameByImageGameData.name);
 
     } catch (err) {
       this.logger.warn(err);
@@ -44,7 +44,7 @@ export class FindNameByImageGameData implements ImagesData {
       this.pruposedItems = [];
       this.score = 0;
       this.rounds = rounds || Number(process.env.ROUNDS);
-      this.logger.info('Data successfully created in %s', FindNameByImageGameData.name);
+      this.logger.debug('Data successfully created in %s', FindNameByImageGameData.name);
     }
   }
 
@@ -66,7 +66,7 @@ export class FindNameByImageGameData implements ImagesData {
         }, null, 2)
         , 'utf-8');
 
-      this.logger.info('Data successfully saved in json in %s', FindNameByImageGameData.name);
+      this.logger.debug('Data successfully saved in json in %s', FindNameByImageGameData.name);
     
     } catch (err) {
       this.logger.error(err);

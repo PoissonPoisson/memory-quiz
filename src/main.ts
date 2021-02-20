@@ -1,5 +1,5 @@
 import { existsSync } from 'fs';
-import logger from './utils/logger';
+import logger from './common/utils/logger';
 import { server } from './app';
 
 // If the environment varialbes file is not found, set default values 

@@ -1,16 +1,15 @@
 import { ServerResponse } from "http";
-import { ParsedUrlQuery } from "querystring";
 import { readFile, writeFile } from 'fs';
 import { promisify } from 'util';
-import { supplant } from '../utils/util';
+import { supplant } from '../common/utils/util';
 import { join } from 'path';
-import { FindNameByImageGameData } from '../models/findNameByImageGameData.model';
-import { ServerData } from '../models/serverData.model';
+import { FindNameByImageGameData } from './findNameByImageGameData.model';
+import { ServerData } from '../common/models/serverData.model';
 
 const readFileAsync = promisify(readFile);
 const writeFileAsync = promisify(writeFile);
 
-export async function req_find_name_result (res: ServerResponse, query: ParsedUrlQuery): Promise<void> {
+export async function req_find_name_result (res: ServerResponse, selected: string): Promise<void> {
 
   const gameDataPath: string = join(__dirname, '../../find_name_game_data.json');
   const gameData = new FindNameByImageGameData(gameDataPath);
@@ -22,7 +21,7 @@ export async function req_find_name_result (res: ServerResponse, query: ParsedUr
     rounds: process.env.ROUNDS
   };
 
-  if (query.selected === gameData.currentItem) {
+  if (selected === gameData.currentItem) {
     gameData.score++;
     dataOnPage.buttons = gameData.pruposedItems.map((item: string, index: number) => {
       // Create proposals response buttons with item name, show specification on README.md
@@ -35,7 +34,7 @@ export async function req_find_name_result (res: ServerResponse, query: ParsedUr
       // Create proposals response buttons with item name, show specification on README.md
       const content = `<div class="button"><button style="${item === gameData.currentItem
         ? 'background-color: green;'
-        : item === query.selected
+        : item === selected
           ? 'background-color: red;'
           : ''}">${item.replace(/\_/g, ' ')}</button></div>`;
       return index % 2 == 0 ? `<div class="buttons-line">${content}` : `${content}</div>`;
@@ -53,9 +52,9 @@ export async function req_find_name_result (res: ServerResponse, query: ParsedUr
     if (gameData.score > serverData.bestScore) {
       serverData.bestScore = gameData.score;
     }
-    dataOnPage.nextStep = `<a href="/"><button id="next-page-button">Home page</button></a>`;
+    dataOnPage.nextStep = `<a href="/"><button>Home page</button></a>`;
   } else {
-    dataOnPage.nextStep = `<a href="/find_name_game"><button id="next-page-button">Next</button></a>`;
+    dataOnPage.nextStep = `<a href="/find_name_game"><button>Next</button></a>`;
   } 
 
   // Save game data
@@ -63,7 +62,7 @@ export async function req_find_name_result (res: ServerResponse, query: ParsedUr
   // Save server data
   await writeFileAsync(serverDataPath, JSON.stringify(serverData, null, 2), 'utf-8');
 
-  let page = await readFileAsync(join(__dirname, '../views/find_name_result_page.html'), 'utf-8');
+  let page = await readFileAsync(join(__dirname, './find_name_result_page.html'), 'utf-8');
   // Generate page
   page = supplant(page, dataOnPage);
 

@@ -1,0 +1,109 @@
+@import '../styles/style.less';
+
+/* Style for find name game type */
+
+/* General page */
+
+#container {
+  display: flex;
+  flex-direction: row;
+  .full-fill();
+
+  div {
+    width: 50%;
+  }
+
+  /* image pannel */
+  
+  #image-pannel {
+    background-color: black;
+  
+    img {
+      .full-fill();
+      object-fit: contain;
+    }
+  }
+}
+
+/* action pannel */
+
+#action-pannel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  div {
+    width: 100%;
+  }
+
+  .buttons-line {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    .button {
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      a {
+        .full-fill();
+      }
+
+      a > button, button {
+        .full-fill();
+        border: 1px solid grey;
+        background-color: transparent;
+        font-size: large;
+      }
+    }
+  }
+
+  #data-line {
+    display: flex;
+    flex-direction: row;
+    height: 20%;
+    
+    div {
+      width: 50%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: large;
+    }
+  }
+
+  #next-page {
+    height: 20%;
+
+    a {
+      .full-fill();
+
+      button {
+        .full-fill();
+        border: 1px solid grey;
+      }
+
+      button:hover {
+        cursor: pointer;
+        background-color: darkgrey;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  #container {
+    flex-direction: column;
+
+    div {
+      width: 100%;
+    }
+
+    #action-pannel > div {
+      height: 50px;
+    }
+  }
+}

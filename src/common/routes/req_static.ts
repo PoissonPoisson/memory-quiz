@@ -2,9 +2,8 @@ import { readFile } from 'fs';
 import { promisify } from 'util';
 import {  ServerResponse } from 'http';
 import { join, extname } from 'path';
-import { regex } from 'uuidv4';
-import { FindNameByImageGameData } from '../models/findNameByImageGameData.model';
-import { FindImageByNameGameData } from '../models/findImageByNameGameData.model';
+import { FindNameByImageGameData } from '../../find_name/findNameByImageGameData.model';
+import { FindImageByNameGameData } from '../../find_image/findImageByNameGameData.model';
 import logger from '../utils/logger';
 
 require('dotenv').config();
@@ -14,12 +13,12 @@ export async function req_static (pathname: string, res: ServerResponse): Promis
   let type: string;
   let file: string = pathname;
   
-  if (pathname.startsWith('/image/') && pathname.split('/')[2].match(regex.v4) ) {
+  if (pathname.startsWith('/image/') && pathname.split('/')[2].match(/^\d$/) ) {
     if (process.env.GAME_MODE === 'find_name') {
-      file = new FindNameByImageGameData(join(__dirname, '../../find_name_game_data.json')).imagesData.get(pathname.split('/')[2]);
+      file = new FindNameByImageGameData(join(__dirname, '../../../find_name_game_data.json')).imagesData.get(pathname.split('/')[2]);
 
     } else if (process.env.GAME_MODE === 'find_image') {
-      file = new FindImageByNameGameData(join(__dirname, '../../find_image_game_data.json')).imagesData.get(pathname.split('/')[2]);
+      file = new FindImageByNameGameData(join(__dirname, '../../../find_image_game_data.json')).imagesData.get(pathname.split('/')[2]);
     }
   }
 
@@ -30,7 +29,7 @@ export async function req_static (pathname: string, res: ServerResponse): Promis
       break;
     case '.css':
       type = 'text/css';
-      file = join(__dirname, '../assets/css', file);
+      file = join(__dirname, '../../../dist', file);
       break;
     case '.png':
       type = 'image/png';

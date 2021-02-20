@@ -44,14 +44,6 @@ ROUNDS=10
 NODE_ENV=develop
 ```
 
-* Create an server data file `data.json` at the root of the project and copy example :
-```json
-{
-  "bestScore": 0,
-  "gameCounter": 0
-}
-```
-
 * Install dependencies
 ```
 > npm install

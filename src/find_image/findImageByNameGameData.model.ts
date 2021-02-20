@@ -1,7 +1,7 @@
 import { readFileSync, writeFile } from 'fs';
-import { ImagesData } from './ImagesData.model';
+import { ImagesData } from '../common/models/ImagesData.model';
 import { promisify } from 'util';
-import { default as defaultLogger } from '../utils/logger';
+import { default as defaultLogger } from '../common/utils/logger';
 import { Logger } from 'winston';
 
 const writeFileAsync = promisify(writeFile);
