@@ -1,7 +1,7 @@
 import { readFileSync, unlinkSync, existsSync } from 'fs';
 import { expect } from 'chai';
-import { FindImageByNameGameData } from '../src/models/findImageByNameGameData.model';
-import { FindNameByImageGameData } from '../src/models/findNameByImageGameData.model';
+import { FindImageByNameGameData } from '../src/find_image/findImageByNameGameData.model';
+import { FindNameByImageGameData } from '../src/find_name/findNameByImageGameData.model';
 import { createLogger, format, transports } from 'winston';
 
 const logger = createLogger({
