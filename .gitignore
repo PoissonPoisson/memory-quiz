@@ -1,6 +1,8 @@
 node_modules/
 build/
+dist/
+
 .env
-**/*.json
+*data.json
 TODO.md
 **/*.log

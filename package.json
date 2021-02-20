@@ -1,45 +1,39 @@
 {
   "name": "memory-quiz",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "Generic memory quiz server",
   "author": "PoissonPoisson",
   "license": "MIT",
   "keywords": [
-    "Node.js",
-    "TypeScript",
-    "http server"
+    "node-js",
+    "typescript",
+    "http-server",
+    "less",
+    "memory-quiz"
   ],
   "main": "src/main.ts",
   "scripts": {
     "start": "node build/main.js",
     "start:dev": "nodemon",
-    "build": "npm run clear && npm run build-ts && npm run copy-views && npm run copy-assets",
+    "build": "npm run clear && npm run build-ts && npm run copy-views",
     "build-ts": "tsc",
+    "build-css": "less-watch-compiler",
     "clear": "rm -rf build/*",
-    "copy-views": "cp -r src/views/ build/views/",
-    "copy-assets": "cp -r src/assets build/assets",
+    "copy-views": "cp -r src/**/*.html build/**/*.html",
     "test": "mocha -r ts-node/register tests/**/*.spec.ts"
-  },
-  "nodemonConfig": {
-    "watch": ["src"],
-    "ext": ".ts",
-    "ignore": [
-      "*.spec.ts",
-      "*.json"
-    ],
-    "exec": "ts-node ./src/main.ts"
   },
   "devDependencies": {
     "@types/chai": "^4.2.14",
-    "@types/mocha": "^8.0.4",
-    "@types/node": "^14.14.7",
+    "@types/mocha": "^8.2.0",
+    "@types/node": "^14.14.22",
     "@types/uuidv4": "^5.0.0",
     "@types/winston": "^2.4.4",
     "chai": "^4.2.0",
+    "less-watch-compiler": "^1.14.6",
     "mocha": "^8.2.1",
     "nodemon": "^2.0.7",
-    "ts-node": "^9.0.0",
-    "typescript": "^4.0.5"
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
   },
   "dependencies": {
     "dotenv": "^8.2.0",

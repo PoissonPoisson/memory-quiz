@@ -1,0 +1,6 @@
+{
+  "watch": ["src", ".env"],
+  "ext": ".ts,.html,.less,.env",
+  "ignore": ["*.spec.ts", "*.json", "build", "dist"],
+  "exec": "ts-node ./src/main.ts"
+}
